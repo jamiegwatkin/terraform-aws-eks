@@ -17,6 +17,15 @@ provider "kubernetes" {
   load_config_file       = false
 }
 
+provider "helm" {
+  kubernetes {
+    host                   = data.aws_eks_cluster.cluster.endpoint
+    cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+    token                  = data.aws_eks_cluster_auth.cluster.token
+  }
+}
+
+
 data "aws_availability_zones" "available" {
 }
 
@@ -74,7 +83,7 @@ module "eks" {
 
   node_groups = {
     example = {
-      desired_capacity = 1
+      desired_capacity = 3
       max_capacity     = 10
       min_capacity     = 1
 
@@ -88,13 +97,13 @@ module "eks" {
       additional_tags = {
         ExtraTag = "example"
       }
-      taints = [
-        {
-          key    = "dedicated"
-          value  = "gpuGroup"
-          effect = "NO_SCHEDULE"
-        }
-      ]
+      # taints = [
+      #   {
+      #     key    = "dedicated"
+      #     value  = "gpuGroup"
+      #     effect = "NO_SCHEDULE"
+      #   }
+      # ]
       update_config = {
         max_unavailable_percentage = 50 # or set `max_unavailable`
       }

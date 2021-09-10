@@ -1,0 +1,47 @@
+# See https://github.com/hashicorp/consul-helm/blob/master/values.yaml
+global:
+  datacenter: hashidc1
+  enabled: true 
+  metrics:    
+    enabled: true
+    enableGatewayMetrics: true
+    enableAgentMetrics: true   
+
+ui:
+  service:
+    type: 'LoadBalancer'
+    annotations: 
+      "service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0"
+  metrics:
+    enabled: true
+    provider: "prometheus"
+    baseURL: http://prometheus-server
+
+
+syncCatalog:
+  enabled: true
+
+connectInject:
+  enabled: true
+  metrics:
+    defaultEnableMerging: true 
+
+controller:
+  enabled: true
+
+ingressGateways:
+  enabled: true
+  gateways:
+    - name: ingress-gateway
+      service:
+        type: LoadBalancer
+        ports:
+          - port: 80
+            nodePort: null
+          - port: 443
+            nodePort: null
+dns:
+  enabled: true
+
+prometheus:
+  enabled: true
